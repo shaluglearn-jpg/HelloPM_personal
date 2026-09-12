@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Shalu Gupta — Product Manager building AI-powered enterprise platforms across AI/ML, IoT, data and integrations.">
+<title>Shalu Gupta — Product Manager</title>
+<style>
+  :root{
+    --ink:#17212b;
+    --muted:#68737d;
+    --paper:#f8f6f1;
+    --card:#ffffff;
+    --line:#e7e2d9;
+    --navy:#233b49;
+    --navy-2:#304d5b;
+    --coral:#e65d4f;
+    --yellow:#f1c85b;
+    --mint:#b8d8c8;
+    --blue:#b8d7e8;
+    --shadow:0 18px 50px rgba(23,33,43,.08);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.55;
+  }
+  a{color:inherit}
+  .wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+  nav{
+    position:sticky;top:0;z-index:20;
+    backdrop-filter:blur(18px);
+    background:rgba(248,246,241,.88);
+    border-bottom:1px solid rgba(231,226,217,.8);
+  }
+  .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:900;letter-spacing:-.04em;font-size:20px;text-decoration:none}
+  .brand span{color:var(--coral)}
+  .nav-links{display:flex;gap:26px;font-size:14px;font-weight:700}
+  .nav-links a{text-decoration:none;color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{
+    text-decoration:none;background:var(--ink);color:white;
+    padding:11px 17px;border-radius:999px;font-size:13px;font-weight:800;
+  }
+
+  .hero{padding:78px 0 58px}
+  .hero-grid{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;text-transform:uppercase;letter-spacing:.13em;font-weight:900;
+    color:var(--navy);margin-bottom:18px
+  }
+  .dot{width:9px;height:9px;background:var(--coral);border-radius:50%}
+  h1{
+    font-size:clamp(48px,7vw,88px);line-height:.93;letter-spacing:-.075em;
+    margin:0 0 25px;max-width:850px
+  }
+  .hero-copy{font-size:20px;color:#48545e;max-width:680px}
+  .hero-copy strong{color:var(--ink)}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;text-decoration:none;
+    padding:14px 20px;border-radius:999px;font-weight:850;font-size:14px;
+    border:1px solid var(--line);background:white
+  }
+  .btn.primary{background:var(--ink);border-color:var(--ink);color:white}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(23,33,43,.1)}
+  .hero-art{position:relative;min-height:420px}
+  .shape{
+    position:absolute;border-radius:38px;box-shadow:var(--shadow)
+  }
+  .shape.one{inset:20px 30px 80px 20px;background:var(--navy);transform:rotate(-5deg)}
+  .shape.two{inset:70px 5px 20px 80px;background:var(--yellow);transform:rotate(7deg)}
+  .profile-card{
+    position:absolute;inset:55px 38px 50px 48px;background:#fff;border:1px solid var(--line);
+    border-radius:32px;padding:28px;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between
+  }
+  .avatar{
+    width:70px;height:70px;border-radius:50%;background:var(--coral);color:#fff;
+    display:grid;place-items:center;font-size:27px;font-weight:900
+  }
+  .profile-card h2{font-size:29px;letter-spacing:-.05em;line-height:1;margin:22px 0 8px}
+  .profile-card p{margin:0;color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+  .chip{padding:7px 10px;border-radius:999px;background:#f3f0ea;font-size:11px;font-weight:800}
+  .availability{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800}
+  .availability i{width:8px;height:8px;border-radius:50%;background:#4b9b67}
+
+  section{padding:68px 0}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:28px}
+  .section-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.14em;font-weight:900;color:var(--coral)}
+  h2.section-title{font-size:clamp(30px,4vw,48px);line-height:1;letter-spacing:-.06em;margin:8px 0 0}
+  .section-intro{max-width:510px;color:var(--muted);font-size:15px}
+
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px
+  }
+  .stat{
+    background:white;border:1px solid var(--line);border-radius:22px;padding:24px;
+    min-height:150px;display:flex;flex-direction:column;justify-content:space-between
+  }
+  .stat:nth-child(1){background:var(--navy);color:white}
+  .stat:nth-child(2){background:#f5dfaa}
+  .stat:nth-child(3){background:#d7e7df}
+  .stat:nth-child(4){background:#d7e8f0}
+  .stat-num{font-size:39px;line-height:1;font-weight:950;letter-spacing:-.06em}
+  .stat-label{font-size:13px;font-weight:750;max-width:180px}
+
+  .masonry{
+    columns:3 280px;column-gap:16px
+  }
+  .card{
+    break-inside:avoid;margin:0 0 16px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:26px;box-shadow:0 5px 18px rgba(23,33,43,.025)
+  }
+  .card.dark{background:var(--navy);color:white;border-color:var(--navy)}
+  .card.warm{background:#f4dfad}
+  .card.mint{background:#d6e6dd}
+  .card.blue{background:#d5e6ef}
+  .card h3{font-size:24px;line-height:1.05;letter-spacing:-.045em;margin:0 0 10px}
+  .card p{font-size:14px;color:var(--muted);margin:0 0 15px}
+  .dark p{color:#d7e0e4}
+  .tagrow{display:flex;flex-wrap:wrap;gap:7px}
+  .tag{font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.55)}
+  .dark .tag{background:rgba(255,255,255,.12)}
+  .metric{
+    font-size:43px;font-weight:950;letter-spacing:-.07em;line-height:1;margin:20px 0 8px
+  }
+  .metric-note{font-size:12px;font-weight:750}
+
+  .timeline{position:relative;display:grid;gap:14px}
+  .timeline:before{content:"";position:absolute;left:14px;top:20px;bottom:20px;width:1px;background:var(--line)}
+  .role{
+    position:relative;display:grid;grid-template-columns:34px 1fr auto;gap:18px;
+    background:white;border:1px solid var(--line);border-radius:20px;padding:22px 24px
+  }
+  .role-dot{width:11px;height:11px;border-radius:50%;background:var(--coral);margin:6px 0 0 9px;z-index:1;box-shadow:0 0 0 6px var(--paper)}
+  .role h3{margin:0;font-size:19px;letter-spacing:-.025em}
+  .role .company{font-weight:900;margin-bottom:3px}
+  .role .meta{font-size:12px;color:var(--muted)}
+  .role .description{font-size:13px;color:#59636c;margin-top:11px;max-width:720px}
+  .role .years{font-size:12px;font-weight:850;color:var(--muted);white-space:nowrap}
+
+  .cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .cap{
+    background:white;border:1px solid var(--line);border-radius:20px;padding:22px
+  }
+  .cap h3{margin:0 0 7px;font-size:17px}
+  .cap p{margin:0;color:var(--muted);font-size:13px}
+  .icon{
+    width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+    background:#f2eee7;margin-bottom:17px
+  }
+  .icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  .education{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .edu{background:var(--navy);color:white;border-radius:24px;padding:27px}
+  .edu:nth-child(2){background:#e8d9bd;color:var(--ink)}
+  .edu h3{margin:0 0 7px;font-size:19px}
+  .edu p{margin:0;color:#d7e0e4;font-size:13px}
+  .edu:nth-child(2) p{color:#5e5a52}
+
+  .contact{
+    background:var(--navy);color:white;border-radius:32px;padding:48px;
+    display:grid;grid-template-columns:1fr auto;align-items:end;gap:30px
+  }
+  .contact h2{font-size:clamp(35px,5vw,62px);line-height:.95;letter-spacing:-.065em;margin:10px 0 16px}
+  .contact p{color:#d6e0e4;max-width:600px;margin:0}
+  .contact-links{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .contact-links a{color:white;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:4px;font-size:14px;font-weight:750}
+  footer{padding:30px 0 48px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between}
+
+  @media(max-width:850px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-art{min-height:340px;max-width:600px;width:100%;margin:auto}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .contact{grid-template-columns:1fr}
+    .contact-links{align-items:flex-start}
+  }
+  @media(max-width:620px){
+    .wrap{width:min(100% - 28px,1180px)}
+    .nav-links{display:none}
+    .nav-cta{padding:9px 13px}
+    .hero{padding-top:50px}
+    h1{font-size:52px}
+    .hero-copy{font-size:17px}
+    .stats,.cap-grid,.education{grid-template-columns:1fr}
+    .role{grid-template-columns:25px 1fr}
+    .role .years{grid-column:2;grid-row:1}
+    .contact{padding:30px}
+  }
+  @media print{
+    nav,.hero-actions{display:none}
+    body{background:#fff}
+    section{padding:30px 0}
+    .card,.stat,.role,.cap,.edu,.contact{break-inside:avoid;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">Shalu<span>.</span></a>
+    <div class="nav-links">
+      <a href="#impact">Impact</a>
+      <a href="#experience">Experience</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#education">Education</a>
+    </div>
+    <a class="nav-cta" href="mailto:shalugupta22@gmail.com">Let's connect ↗</a>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Product Manager · AI/ML · Enterprise SaaS</div>
+        <h1>I turn complex data into products people actually use.</h1>
+        <p class="hero-copy">
+          <strong>9+ years in product</strong> and <strong>15+ years in software</strong>,
+          building enterprise products across AI/ML, IoT, data, travel and platform integrations.
+          Most recently, I led product strategy for Honeywell's AI/ML-powered Smart Building IoT platform.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="mailto:shalugupta22@gmail.com">Start a conversation ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/shalugupta22" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="shape one"></div>
+        <div class="shape two"></div>
+        <div class="profile-card">
+          <div>
+            <div class="avatar">SG</div>
+            <h2>Shalu Gupta</h2>
+            <p>Product Manager · Enterprise B2B SaaS · AI/ML · IoT Platform</p>
+            <div class="chips">
+              <span class="chip">AI/ML</span>
+              <span class="chip">IoT</span>
+              <span class="chip">Data</span>
+              <span class="chip">APIs</span>
+              <span class="chip">B2B SaaS</span>
+              <span class="chip">CSPO</span>
+            </div>
+          </div>
+          <div class="availability"><i></i> Open to Product Manager / Product Owner roles</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="impact">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Proof, not promises</div>
+          <h2 class="section-title">Impact at a glance</h2>
+        </div>
+        <p class="section-intro">A career shaped around simplifying complex enterprise workflows, improving adoption and making platforms easier to scale.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num">90%</div><div class="stat-label">enterprise adoption of an AI product through human-in-the-loop workflows</div></div>
+        <div class="stat"><div class="stat-num">85%</div><div class="stat-label">faster enterprise onboarding — from 2 weeks to ~4 hours</div></div>
+        <div class="stat"><div class="stat-num">95%</div><div class="stat-label">reduction in support tickets through a self-serve experience</div></div>
+        <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">IoT building data points supported across enterprise onboarding</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Selected work</div>
+          <h2 class="section-title">Where product meets complexity</h2>
+        </div>
+      </div>
+
+      <div class="masonry">
+        <article class="card dark">
+          <div class="section-kicker" style="color:#f3cfd0">01 · Honeywell</div>
+          <h3>AI-assisted asset onboarding</h3>
+          <p>Productized an ML-powered asset classifier to transform a multi-week manual onboarding process into an approximately four-hour flow, pairing classification with human validation.</p>
+          <div class="metric">2 weeks → 4 hrs</div>
+          <div class="metric-note">85% faster onboarding · 85% classifier accuracy · 29 asset types</div>
+        </article>
+
+        <article class="card warm">
+          <div class="section-kicker">02 · Adoption</div>
+          <h3>Human-in-the-loop by design</h3>
+          <p>Embedded continuous customer feedback and data-driven iteration into the AI product experience to accelerate value realization.</p>
+          <div class="metric">90%</div>
+          <div class="metric-note">Enterprise adoption</div>
+        </article>
+
+        <article class="card mint">
+          <div class="section-kicker">03 · Scale</div>
+          <h3>From assisted to self-serve</h3>
+          <p>Transformed the platform into a self-serve experience, using ongoing user feedback to validate and scale improvements.</p>
+          <div class="metric">95%</div>
+          <div class="metric-note">Fewer support tickets · 40% lower operations headcount</div>
+        </article>
+
+        <article class="card blue">
+          <div class="section-kicker">04 · Product craft</div>
+          <h3>Strategy → roadmap → launch</h3>
+          <p>Experience spanning product vision, roadmap definition, user research and workshops, backlog prioritization, stakeholder alignment, execution and launch.</p>
+          <div class="tagrow">
+            <span class="tag">Vision</span><span class="tag">Roadmap</span><span class="tag">Backlog</span><span class="tag">Agile</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-kicker">05 · Integrations</div>
+          <h3>Built across the stack</h3>
+          <p>Hands-on product context across Haystack ontology, Azure Databricks &amp; Data Lake, Neo4j, time-series data, REST APIs, OAuth 2.0, X12 EDI, HL7 v2 and FHIR.</p>
+          <div class="tagrow">
+            <span class="tag">Data</span><span class="tag">APIs</span><span class="tag">Ontology</span><span class="tag">Healthcare</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-kicker">06 · 0 → 1</div>
+          <h3>Cinch Home Services</h3>
+          <p>As Product Owner at Accion Labs, formulated product vision and feature roadmaps, partnered with users, business, UX and engineering, and drove delivery from inception to launch.</p>
+          <div class="tagrow"><span class="tag">0→1</span><span class="tag">UX</span><span class="tag">Engineering</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Career</div>
+          <h2 class="section-title">Experience that compounds</h2>
+        </div>
+        <p class="section-intro">From software engineering and quality to business analysis and product leadership — a progression toward owning customer value end to end.</p>
+      </div>
+
+      <div class="timeline">
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Honeywell</div>
+            <h3>Sr Advanced Tech Product Manager</h3>
+            <div class="meta">Bengaluru · Nov 2021 – Mar 2026</div>
+            <div class="description">Led product strategy and delivery for an AI/ML-powered Smart Building IoT platform, enabling enterprises to onboard, classify and manage building assets at scale using machine learning, time-series analysis and Haystack ontology.</div>
+          </div>
+          <div class="years">4y 5m</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Accion Labs</div>
+            <h3>Product Owner · Client: Cinch Home Services</h3>
+            <div class="meta">Bengaluru · Jul 2020 – May 2022</div>
+            <div class="description">Owned product vision and feature roadmaps; worked with users, business leadership, UX and engineering to prioritize the backlog, drive adoption, manage trade-offs and deliver from inception to launch.</div>
+          </div>
+          <div class="years">1y 11m</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Genisys Group</div>
+            <h3>Product Owner · Flight Centre Travel Group</h3>
+            <div class="meta">Bengaluru · Dec 2018 – May 2020</div>
+            <div class="description">Led product development and delivery, ran requirements and gap-analysis workshops, coordinated with onshore stakeholders, managed demos, backlog grooming and prioritization. Reduced business discrepancy by 35% and supported regional growth in Canada and Australia.</div>
+          </div>
+          <div class="years">1y 6m</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Qualitrix</div>
+            <h3>Lead Business Analyst · Diksha</h3>
+            <div class="meta">Bengaluru · Jul 2018 – Dec 2018</div>
+            <div class="description">Led business development and quality assurance teams; acted as product showcase face for the internal Ideation Head; drove gap analysis and product requirement definition for better user experience.</div>
+          </div>
+          <div class="years">6m</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Amadeus</div>
+            <h3>Senior Business Analyst · Altea Reservation Desktop &amp; E-Retail</h3>
+            <div class="meta">Bengaluru · Jul 2016 – Jun 2018</div>
+            <div class="description">Elicited customer requirements, designed release documents, developed business use cases and RTMs, and managed offshore agile engagement including backlog tracking and sprint management.</div>
+          </div>
+          <div class="years">2y</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Ness Technologies</div>
+            <h3>Senior Quality Analyst · Amadeus E-Retail</h3>
+            <div class="meta">Bengaluru · Feb 2015 – Jun 2016</div>
+            <div class="description">Defined user stories and test strategy, validated business flows and conducted UAT planning and execution.</div>
+          </div>
+          <div class="years">1y 5m</div>
+        </article>
+
+        <article class="role">
+          <div class="role-dot"></div>
+          <div>
+            <div class="company">Accenture</div>
+            <h3>Software Analyst Engineer</h3>
+            <div class="meta">Dec 2009 – Feb 2015</div>
+            <div class="description">Worked across procurement and banking domains, defining user stories and maintaining product backlogs, running requirements workshops, and supporting test strategy, validation and UAT.</div>
+          </div>
+          <div class="years">5y 3m</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="capabilities">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">How I work</div>
+          <h2 class="section-title">Product toolkit</h2>
+        </div>
+      </div>
+      <div class="cap-grid">
+        <div class="cap">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M7 15l4-5 3 3 5-7"/></svg></div>
+          <h3>AI / ML product strategy</h3>
+          <p>Turning ML capabilities into usable enterprise workflows, with human validation, feedback loops and measurable adoption.</p>
+        </div>
+        <div class="cap">
+          <div class="icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/><path d="M10 7h4a4 4 0 0 1 4 4v3"/></svg></div>
+          <h3>Enterprise platforms &amp; integrations</h3>
+          <p>Product thinking across data integration, APIs, cloud storage, ontology, time-series data and enterprise ecosystems.</p>
+        </div>
+        <div class="cap">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h3>Customer-to-roadmap</h3>
+          <p>Workshops, requirements, gap analysis, user stories, prioritization, demos and stakeholder communication grounded in customer problems.</p>
+        </div>
+        <div class="cap">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v5H6zM4 15h16v5H4z"/><path d="M9 9v3m6-3v3"/></svg></div>
+          <h3>Delivery &amp; agile execution</h3>
+          <p>Backlog grooming, sprint management, quality alignment, risk mitigation and cross-functional execution from inception to launch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Beyond the role</div>
+          <h2 class="section-title">Education &amp; credentials</h2>
+        </div>
+      </div>
+      <div class="education">
+        <div class="edu">
+          <h3>Master of Business Administration</h3>
+          <p>Sikkim Manipal University (SMU) · Information Technology · 2012–2014</p>
+        </div>
+        <div class="edu">
+          <h3>Bachelor of Computer Applications</h3>
+          <p>Bangalore University · Computer Programming, Specific Applications · 2006–2009</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <div class="section-kicker" style="color:#f1c85b">Open to what's next</div>
+          <h2>Let's build something useful.</h2>
+          <p>Open to Product Manager and Product Owner opportunities across AI/ML, Enterprise B2B SaaS, Platform/API Integrations and travel.</p>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:shalugupta22@gmail.com">shalugupta22@gmail.com ↗</a>
+          <a href="tel:+917259808097">+91 72598 08097 ↗</a>
+          <a href="https://www.linkedin.com/in/shalugupta22" target="_blank" rel="noopener">linkedin.com/in/shalugupta22 ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span>© Shalu Gupta</span>
+  <span>Product · AI/ML · Enterprise SaaS · IoT</span>
+</footer>
+
+<script>
+  // Small enhancement: reveal cards as they enter the viewport.
+  const items = document.querySelectorAll('.card,.stat,.role,.cap,.edu,.contact');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.animate(
+          [{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],
+          {duration:520,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'}
+        );
+        observer.unobserve(e.target);
+      }
+    });
+  },{threshold:.08});
+  items.forEach(i=>observer.observe(i));
+</script>
+</body>
+</html>
