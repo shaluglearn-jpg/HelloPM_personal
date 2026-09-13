@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAG Simulator — Learn Retrieval Augmented Generation</title>
+
+<style>
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #667085;
+  --primary: #635bff;
+  --primary-dark: #4f46e5;
+  --green: #16a34a;
+  --green-bg: #ecfdf3;
+  --orange: #ea580c;
+  --orange-bg: #fff7ed;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --purple-bg: #f5f3ff;
+  --red: #dc2626;
+  --shadow: 0 10px 30px rgba(15, 23, 42, .07);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(99,91,255,.08), transparent 30%),
+    radial-gradient(circle at 90% 10%, rgba(37,99,235,.06), transparent 25%),
+    var(--bg);
+}
+
+/* ---------- HEADER ---------- */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(229,231,235,.8);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 750;
+  letter-spacing: -.4px;
+}
+
+.logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #635bff, #8b5cf6);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(99,91,255,.25);
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.badge {
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  background: var(--purple-bg);
+  color: var(--primary-dark);
+}
+
+/* ---------- LAYOUT ---------- */
+
+.app {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: calc(100vh - 72px);
+}
+
+.sidebar {
+  padding: 24px 16px;
+  border-right: 1px solid var(--border);
+  background: rgba(255,255,255,.7);
+}
+
+.sidebar-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin: 8px 12px 12px;
+  font-weight: 750;
+}
+
+.step-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.step-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 11px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  color: #475467;
+  transition: .2s;
+}
+
+.step-btn:hover {
+  background: #f3f4f6;
+}
+
+.step-btn.active {
+  background: #eeecff;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.step-number {
+  width: 27px;
+  height: 27px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 750;
+  background: #f1f3f7;
+  color: #667085;
+  flex-shrink: 0;
+}
+
+.step-btn.active .step-number {
+  background: var(--primary);
+  color: white;
+}
+
+.step-btn.completed .step-number {
+  background: var(--green);
+  color: white;
+}
+
+main {
+  max-width: 1250px;
+  width: 100%;
+  margin: auto;
+  padding: 38px;
+}
+
+/* ---------- HERO ---------- */
+
+.hero {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-weight: 750;
+  font-size: 13px;
+  margin-bottom: 9px;
+}
+
+h1 {
+  font-size: clamp(30px, 4vw, 46px);
+  letter-spacing: -1.7px;
+  margin: 0 0 12px;
+  line-height: 1.05;
+}
+
+.hero p {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ---------- PIPELINE ---------- */
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 6px 2px 20px;
+  margin-bottom: 20px;
+}
+
+.pipeline-node {
+  min-width: 110px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pipeline-icon {
+  width: 45px;
+  height: 45px;
+  margin: auto;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: 0 5px 16px rgba(15,23,42,.04);
+  font-size: 19px;
+  transition: .2s;
+}
+
+.pipeline-node.active .pipeline-icon {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(99,91,255,.22);
+}
+
+.pipeline-label {
+  font-size: 10px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.arrow {
+  color: #98a2b3;
+  font-size: 17px;
+  margin-bottom: 22px;
+}
+
+/* ---------- CONTENT CARD ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 760;
+  letter-spacing: -.3px;
+}
+
+.card-subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+/* ---------- GRID ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media(max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  main {
+    padding: 22px;
+  }
+
+  .grid,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- SOURCE DOCUMENT ---------- */
+
+.source {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 18px;
+  border-radius: 14px;
+  line-height: 1.7;
+  color: #475467;
+  font-size: 13px;
+}
+
+.source-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 750;
+  color: var(--text);
+  margin-bottom: 13px;
+}
+
+.doc-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: #fee2e2;
+}
+
+/* ---------- CHUNKS ---------- */
+
+.chunk {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px;
+  margin-bottom: 10px;
+  background: white;
+  transition: .2s;
+}
+
+.chunk:hover {
+  border-color: #c7c2ff;
+  box-shadow: 0 5px 15px rgba(99,91,255,.08);
+}
+
+.chunk-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.chunk-id {
+  font-size: 11px;
+  font-weight: 750;
+  color: var(--primary);
+}
+
+.chunk-meta {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.chunk-text {
+  font-size: 12px;
+  color: #475467;
+  line-height: 1.55;
+}
+
+/* ---------- EMBEDDING ---------- */
+
+.vector-box {
+  background: #0f172a;
+  color: #c4b5fd;
+  border-radius: 15px;
+  padding: 18px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.vector-number {
+  display: inline-block;
+  margin-right: 7px;
+}
+
+.embedding-visual {
+  height: 190px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  position: relative;
+  background:
+    linear-gradient(#eef0f4 1px, transparent 1px),
+    linear-gradient(90deg, #eef0f4 1px, transparent 1px);
+  background-size: 25px 25px;
+  overflow: hidden;
+}
+
+.dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 5px rgba(99,91,255,.1);
+}
+
+.dot.query {
+  width: 17px;
+  height: 17px;
+  background: var(--orange);
+  box-shadow: 0 0 0 6px rgba(234,88,12,.12);
+}
+
+.dot-label {
+  position: absolute;
+  font-size: 9px;
+  color: var(--muted);
+  transform: translate(9px,-4px);
+  white-space: nowrap;
+}
+
+/* ---------- SEARCH ---------- */
+
+.search-method {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+}
+
+.search-method h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.search-method p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.result {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.score {
+  font-weight: 800;
+  color: var(--green);
+}
+
+.bar {
+  height: 7px;
+  background: #edf0f4;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 1s ease;
+}
+
+/* ---------- PROMPT ---------- */
+
+.prompt {
+  background: #111827;
+  color: #d1d5db;
+  padding: 20px;
+  border-radius: 15px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.prompt .system {
+  color: #c4b5fd;
+}
+
+.prompt .context {
+  color: #93c5fd;
+}
+
+.prompt .question {
+  color: #86efac;
+}
+
+/* ---------- ANSWER ---------- */
+
+.answer {
+  padding: 22px;
+  border-radius: 16px;
+  background: var(--green-bg);
+  border: 1px solid #bbf7d0;
+}
+
+.answer-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 9px;
+}
+
+.answer-text {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #14532d;
+}
+
+.citation {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: white;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* ---------- CONTROLS ---------- */
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+button {
+  font-family: inherit;
+}
+
+.primary-btn,
+.secondary-btn {
+  border: 0;
+  padding: 11px 16px;
+  border-radius: 11px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  transition: .2s;
+}
+
+.primary-btn {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 6px 18px rgba(99,91,255,.2);
+}
+
+.primary-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.secondary-btn {
+  background: #f2f4f7;
+  color: #344054;
+}
+
+.secondary-btn:hover {
+  background: #e7e9ee;
+}
+
+/* ---------- LEARNING NOTE ---------- */
+
+.learning-note {
+  margin-top: 18px;
+  padding: 17px 18px;
+  border-radius: 14px;
+  background: var(--blue-bg);
+  border: 1px solid #bfdbfe;
+}
+
+.learning-note strong {
+  color: #1d4ed8;
+  font-size: 13px;
+}
+
+.learning-note p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #475467;
+  line-height: 1.6;
+}
+
+/* ---------- STATUS ---------- */
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* ---------- QUIZ ---------- */
+
+.quiz {
+  margin-top: 22px;
+}
+
+.quiz-question {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 13px;
+}
+
+.quiz-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.quiz-option:hover {
+  border-color: #aaa4ff;
+}
+
+.quiz-option.correct {
+  background: var(--green-bg);
+  border-color: #86efac;
+}
+
+.quiz-option.wrong {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.fade {
+  animation: fade .35s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">R</div>
+    <div>RAG Simulator</div>
+  </div>
+
+  <div class="header-right">
+    <div class="badge">Interactive Learning</div>
+    <div class="status">
+      <span class="status-dot"></span>
+      No backend required
+    </div>
+  </div>
+</header>
+
+<div class="app">
+
+  <aside class="sidebar">
+
+    <div class="sidebar-title">RAG Pipeline</div>
+
+    <div class="step-nav">
+
+      <button class="step-btn active" data-step="0">
+        <span class="step-number">1</span>
+        <span>Data Sources</span>
+      </button>
+
+      <button class="step-btn" data-step="1">
+        <span class="step-number">2</span>
+        <span>Chunking</span>
+      </button>
+
+      <button class="step-btn" data-step="2">
+        <span class="step-number">3</span>
+        <span>Embeddings</span>
+      </button>
+
+      <button class="step-btn" data-step="3">
+        <span class="step-number">4</span>
+        <span>Index / Store</span>
+      </button>
+
+      <button class="step-btn" data-step="4">
+        <span class="step-number">5</span>
+        <span>User Query</span>
+      </button>
+
+      <button class="step-btn" data-step="5">
+        <span class="step-number">6</span>
+        <span>Retrieval</span>
+      </button>
+
+      <button class="step-btn" data-step="6">
+        <span class="step-number">7</span>
+        <span>Reranking</span>
+      </button>
+
+      <button class="step-btn" data-step="7">
+        <span class="step-number">8</span>
+        <span>Prompt</span>
+      </button>
+
+      <button class="step-btn" data-step="8">
+        <span class="step-number">9</span>
+        <span>LLM</span>
+      </button>
+
+      <button class="step-btn" data-step="9">
+        <span class="step-number">10</span>
+        <span>Grounded Answer</span>
+      </button>
+
+    </div>
+
+    <div class="sidebar-title" style="margin-top:30px;">Learning</div>
+
+    <button class="step-btn" onclick="showQuiz()">
+      <span class="step-number">?</span>
+      <span>Test Yourself</span>
+    </button>
+
+  </aside>
+
+
+  <main>
+
+    <section class="hero">
+      <div class="eyebrow">LEARN RAG BY SIMULATING IT</div>
+      <h1>From document to grounded answer.</h1>
+      <p>
+        Follow one question through the complete Retrieval-Augmented Generation
+        pipeline. Click each stage to understand what happens, what data moves
+        through the system, and why the stage exists.
+      </p>
+    </section>
+
+
+    <!-- PIPELINE -->
+
+    <div class="pipeline">
+
+      <div class="pipeline-node active" data-step="0">
+        <div class="pipeline-icon">📄</div>
+        <div class="pipeline-label">Data</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="1">
+        <div class="pipeline-icon">✂️</div>
+        <div class="pipeline-label">Chunk</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="2">
+        <div class="pipeline-icon">🔢</div>
+        <div class="pipeline-label">Embed</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="3">
+        <div class="pipeline-icon">🗄️</div>
+        <div class="pipeline-label">Index</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="4">
+        <div class="pipeline-icon">❓</div>
+        <div class="pipeline-label">Query</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="5">
+        <div class="pipeline-icon">🔎</div>
+        <div class="pipeline-label">Retrieve</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="6">
+        <div class="pipeline-icon">🏆</div>
+        <div class="pipeline-label">Rerank</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="7">
+        <div class="pipeline-icon">🧩</div>
+        <div class="pipeline-label">Augment</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="8">
+        <div class="pipeline-icon">🤖</div>
+        <div class="pipeline-label">Generate</div>
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="pipeline-node" data-step="9">
+        <div class="pipeline-icon">✅</div>
+        <div class="pipeline-label">Answer</div>
+      </div>
+
+    </div>
+
+
+    <!-- MAIN SIMULATOR -->
+
+    <div id="stage"></div>
+
+
+    <div class="controls">
+      <button class="secondary-btn" id="prevBtn">← Previous</button>
+      <div class="status">
+        <span id="stepCounter">Step 1 of 10</span>
+      </div>
+      <button class="primary-btn" id="nextBtn">Next Step →</button>
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+const steps = [
+  {
+    title: "1. Data Sources",
+    subtitle: "RAG starts with knowledge outside the LLM.",
+    html: `
+      <div class="grid">
+
+        <div>
+          <div class="source">
+            <div class="source-title">
+              <div class="doc-icon">📄</div>
+              Employee_Handbook.pdf
+            </div>
+
+            <strong>Company Leave Policy</strong><br><br>
+
+            Employees are entitled to various types of leave
+            according to company policy. Maternity leave is available
+            to eligible employees for 26 weeks. Employees should notify
+            their manager and HR before beginning their leave.
+
+            <br><br>
+
+            Paternity leave is available for eligible employees
+            according to the applicable company policy.
+          </div>
+        </div>
+
+        <div class="source">
+          <div class="source-title">
+            <div class="doc-icon">🗃️</div>
+            Other possible sources
+          </div>
+
+          <div class="chunk">
+            <b>Confluence</b>
+            <div class="chunk-text">Internal product documentation</div>
+          </div>
+
+          <div class="chunk">
+            <b>Database</b>
+            <div class="chunk-text">Structured employee information</div>
+          </div>
+
+          <div class="chunk">
+            <b>API</b>
+            <div class="chunk-text">Real-time business information</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="learning-note">
+        <strong>Why this matters</strong>
+        <p>
+          An LLM's training knowledge is not automatically aware of your
+          company's private documents. RAG connects the model to external
+          knowledge without requiring that knowledge to be permanently
+          learned through fine-tuning.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "2. Chunking",
+    subtitle: "Large documents are divided into smaller meaningful pieces.",
+    html: `
+      <div class="grid">
+
+        <div class="source">
+          <div class="source-title">📄 Original document</div>
+
+          Employee Handbook<br><br>
+
+          Employees are entitled to various types of leave according
+          to company policy. Maternity leave is available to eligible
+          employees for 26 weeks. Employees should notify their manager
+          and HR before beginning their leave.
+        </div>
+
+        <div>
+
+          <div class="chunk">
+            <div class="chunk-top">
+              <span class="chunk-id">CHUNK-001</span>
+              <span class="chunk-meta">~48 tokens</span>
+            </div>
+            <div class="chunk-text">
+              Employees are entitled to various types of leave
+              according to company policy.
+            </div>
+          </div>
+
+          <div class="chunk">
+            <div class="chunk-top">
+              <span class="chunk-id">CHUNK-002</span>
+              <span class="chunk-meta">~55 tokens</span>
+            </div>
+            <div class="chunk-text">
+              Maternity leave is available to eligible employees
+              for 26 weeks. Employees should notify their manager
+              and HR before beginning their leave.
+            </div>
+          </div>
+
+          <div class="chunk">
+            <div class="chunk-top">
+              <span class="chunk-id">CHUNK-003</span>
+              <span class="chunk-meta">~39 tokens</span>
+            </div>
+            <div class="chunk-text">
+              Paternity leave is available for eligible employees
+              according to applicable company policy.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="learning-note">
+        <strong>Important design decision: chunk size</strong>
+        <p>
+          Chunks that are too large may contain irrelevant information.
+          Chunks that are too small may lose context. In production,
+          chunking strategy can use fixed token sizes, paragraphs,
+          headings, semantic boundaries, or document structure.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "3. Embeddings",
+    subtitle: "Each chunk becomes a numerical representation of its meaning.",
+    html: `
+      <div class="grid">
+
+        <div>
+          <div class="chunk">
+            <div class="chunk-top">
+              <span class="chunk-id">CHUNK-002</span>
+              <span class="chunk-meta">Maternity leave</span>
+            </div>
+
+            <div class="chunk-text">
+              Maternity leave is available to eligible employees
+              for 26 weeks.
+            </div>
+          </div>
+
+          <br>
+
+          <div class="vector-box">
+            embedding(CHUNK-002)<br><br>
+            [ 0.182, -0.421, 0.773, 0.091,<br>
+              &nbsp; 0.334, -0.118, 0.642, 0.229,<br>
+              &nbsp; 0.551, -0.301, 0.092, ... ]
+          </div>
+        </div>
+
+        <div>
+
+          <div class="embedding-visual">
+
+            <div class="dot" style="left:25%;top:32%;"></div>
+            <div class="dot-label" style="left:25%;top:32%;">paternity</div>
+
+            <div class="dot" style="left:53%;top:43%;"></div>
+            <div class="dot-label" style="left:53%;top:43%;">maternity</div>
+
+            <div class="dot" style="left:69%;top:28%;"></div>
+            <div class="dot-label" style="left:69%;top:28%;">parental</div>
+
+            <div class="dot" style="left:17%;top:73%;"></div>
+            <div class="dot-label" style="left:17%;top:73%;">salary</div>
+
+            <div class="dot query" style="left:59%;top:51%;"></div>
+            <div class="dot-label" style="left:59%;top:51%;">YOUR QUERY</div>
+
+          </div>
+
+          <br>
+
+          <div class="learning-note">
+            <strong>Think of embeddings as meaning coordinates.</strong>
+            <p>
+              Similar concepts tend to be closer together in embedding
+              space. The actual vectors have hundreds or thousands of
+              dimensions; the 2D visualization above is only for learning.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    `
+  },
+
+  {
+    title: "4. Index / Store",
+    subtitle: "Embeddings and their metadata are stored for fast retrieval.",
+    html: `
+      <div class="grid-3">
+
+        <div class="search-method">
+          <h3>🧠 Vector Index</h3>
+          <p>
+            Stores embeddings so semantically similar content
+            can be retrieved efficiently.
+          </p>
+        </div>
+
+        <div class="search-method">
+          <h3>🏷️ Metadata</h3>
+          <p>
+            Source, page number, document type, department,
+            date and other filters can be stored with each chunk.
+          </p>
+        </div>
+
+        <div class="search-method">
+          <h3>🔍 Search Index</h3>
+          <p>
+            Keyword indexes can support exact term matching
+            alongside semantic vector search.
+          </p>
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="vector-box">
+        VECTOR DATABASE
+
+        <br><br>
+
+        CHUNK-001 → embedding + metadata<br>
+        CHUNK-002 → embedding + metadata<br>
+        CHUNK-003 → embedding + metadata<br>
+        CHUNK-004 → embedding + metadata<br>
+        CHUNK-005 → embedding + metadata
+
+        <br><br>
+
+        metadata = {
+          source: "Employee_Handbook.pdf",
+          page: 17,
+          section: "Leave Policy"
+        }
+      </div>
+
+      <div class="learning-note">
+        <strong>Key distinction</strong>
+        <p>
+          The vector database is not the LLM. It is a knowledge retrieval
+          layer. Its job is to find useful information; the LLM's job is
+          to reason over that retrieved information and generate language.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "5. User Query",
+    subtitle: "Now the user asks a question at inference time.",
+    html: `
+      <div class="card" style="box-shadow:none;border:0;background:transparent;">
+        <div class="card-body" style="padding:0;">
+
+          <div class="source" style="font-size:17px;padding:25px;">
+            <div class="eyebrow">USER QUESTION</div>
+            "How many weeks of maternity leave are employees entitled to?"
+          </div>
+
+          <br>
+
+          <div class="grid">
+
+            <div class="search-method">
+              <h3>Query embedding</h3>
+              <p>
+                The question is converted into an embedding using
+                the same or compatible embedding model used for documents.
+              </p>
+
+              <br>
+
+              <div class="vector-box">
+                query_vector =<br>
+                [0.191, -0.398, 0.751, 0.104, ...]
+              </div>
+            </div>
+
+            <div class="search-method">
+              <h3>Query understanding</h3>
+              <p>
+                Production systems may also rewrite the query,
+                extract filters, expand terms, or decompose complex
+                questions before retrieval.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    `
+  },
+
+  {
+    title: "6. Retrieval",
+    subtitle: "Find candidate chunks using semantic, keyword, or hybrid search.",
+    html: `
+      <div class="grid">
+
+        <div class="search-method">
+          <h3>🧠 Semantic / Vector Search</h3>
+          <p>
+            Finds chunks with similar meaning even if the exact
+            words differ.
+          </p>
+
+          <div class="result">
+            <div class="result-row">
+              <span>CHUNK-002</span>
+              <span class="score">0.94</span>
+            </div>
+            <div class="bar">
+              <div class="bar-fill" style="width:94%;"></div>
+            </div>
+          </div>
+
+          <div class="result">
+            <div class="result-row">
+              <span>CHUNK-003</span>
+              <span class="score">0.71</span>
+            </div>
+            <div class="bar">
+              <div class="bar-fill" style="width:71%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-method">
+          <h3>🔤 Keyword / Text Search</h3>
+          <p>
+            Finds exact or lexical matches such as "maternity",
+            "leave", "weeks", etc.
+          </p>
+
+          <div class="result">
+            <div class="result-row">
+              <span>CHUNK-002</span>
+              <span class="score">0.98</span>
+            </div>
+            <div class="bar">
+              <div class="bar-fill" style="width:98%;"></div>
+            </div>
+          </div>
+
+          <div class="result">
+            <div class="result-row">
+              <span>CHUNK-001</span>
+              <span class="score">0.65</span>
+            </div>
+            <div class="bar">
+              <div class="bar-fill" style="width:65%;"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="search-method">
+        <h3>⚡ Hybrid Search</h3>
+        <p>
+          Combines semantic and lexical retrieval. This is often useful
+          when you need both conceptual relevance and exact matching.
+        </p>
+      </div>
+
+      <div class="learning-note">
+        <strong>Important: retrieval is not generation.</strong>
+        <p>
+          At this stage we are simply finding evidence. The LLM has not
+          generated the final answer yet.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "7. Reranking",
+    subtitle: "Retrieved candidates are evaluated again to improve relevance.",
+    html: `
+      <div class="source">
+        <div class="source-title">
+          🔎 Initial retrieval returned 5 chunks
+        </div>
+
+        <div class="result">
+          <div class="result-row">
+            <span>CHUNK-002 — Maternity leave</span>
+            <b class="score">0.97</b>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" style="width:97%;"></div>
+          </div>
+        </div>
+
+        <div class="result">
+          <div class="result-row">
+            <span>CHUNK-003 — Paternity leave</span>
+            <b class="score">0.61</b>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" style="width:61%;"></div>
+          </div>
+        </div>
+
+        <div class="result">
+          <div class="result-row">
+            <span>CHUNK-001 — General leave</span>
+            <b class="score">0.54</b>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" style="width:54%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="grid">
+
+        <div class="search-method">
+          <h3>Retriever</h3>
+          <p>
+            Optimized for finding a broad candidate set quickly.
+            Example: retrieve top 20 chunks.
+          </p>
+        </div>
+
+        <div class="search-method">
+          <h3>Reranker</h3>
+          <p>
+            A more precise relevance model can reorder those candidates.
+            Example: reduce 20 candidates to the best 3–5 chunks.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="learning-note">
+        <strong>Why two stages?</strong>
+        <p>
+          Retrieval prioritizes recall — don't miss useful information.
+          Reranking prioritizes precision — put the best information
+          into the LLM context.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "8. Prompt Augmentation",
+    subtitle: "Retrieved evidence is placed into the prompt sent to the LLM.",
+    html: `
+      <div class="prompt">
+<span class="system">SYSTEM INSTRUCTION</span>
+
+You are a helpful company policy assistant.
+
+Answer the user's question using ONLY the
+provided context. If the answer is not in the
+context, say that you do not have enough information.
+
+<span class="context">RETRIEVED CONTEXT</span>
+
+[Source: Employee_Handbook.pdf, Page 17]
+
+Maternity leave is available to eligible employees
+for 26 weeks. Employees should notify their manager
+and HR before beginning their leave.
+
+<span class="question">USER QUESTION</span>
+
+How many weeks of maternity leave are employees
+entitled to?
+      </div>
+
+      <div class="learning-note">
+        <strong>This is the "Augmented" in RAG.</strong>
+        <p>
+          The LLM receives the user question plus relevant external
+          knowledge retrieved from your organization's data sources.
+          You are not retraining the LLM on the document.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "9. LLM Generation",
+    subtitle: "The LLM uses the retrieved context to formulate the response.",
+    html: `
+      <div class="grid">
+
+        <div class="search-method">
+          <h3>Input to LLM</h3>
+          <p>
+            The model receives instructions, retrieved context,
+            and the user's question.
+          </p>
+
+          <br>
+
+          <div class="vector-box">
+            SYSTEM<br>
+            +<br>
+            CONTEXT<br>
+            +<br>
+            USER QUESTION
+          </div>
+        </div>
+
+        <div class="search-method">
+          <h3>What the LLM does</h3>
+
+          <div class="chunk">
+            <b>1. Understand question</b>
+            <div class="chunk-text">
+              Identify that the user is asking about maternity leave duration.
+            </div>
+          </div>
+
+          <div class="chunk">
+            <b>2. Read evidence</b>
+            <div class="chunk-text">
+              Find "26 weeks" in the supplied context.
+            </div>
+          </div>
+
+          <div class="chunk">
+            <b>3. Generate response</b>
+            <div class="chunk-text">
+              Formulate a concise answer grounded in the evidence.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="learning-note">
+        <strong>RAG vs Fine-tuning</strong>
+        <p>
+          RAG gives the model information at runtime. Fine-tuning changes
+          model behavior/weights through additional training. They solve
+          different problems and can also be used together.
+        </p>
+      </div>
+    `
+  },
+
+  {
+    title: "10. Grounded Answer",
+    subtitle: "The user receives an answer based on retrieved evidence.",
+    html: `
+      <div class="answer">
+
+        <div class="answer-label">
+          ✓ Grounded response
+        </div>
+
+        <div class="answer-text">
+          Eligible employees are entitled to
+          <strong>26 weeks of maternity leave</strong>
+          according to the company leave policy.
+
+          <span class="citation">
+            Employee Handbook · p.17
+          </span>
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="grid-3">
+
+        <div class="search-method">
+          <h3>🎯 Groundedness</h3>
+          <p>
+            Does the generated answer actually follow
+            the retrieved evidence?
+          </p>
+        </div>
+
+        <div class="search-method">
+          <h3>🔎 Retrieval Quality</h3>
+          <p>
+            Did we retrieve the right chunks in the first place?
+          </p>
+        </div>
+
+        <div class="search-method">
+          <h3>⚡ Latency & Cost</h3>
+          <p>
+            How quickly and economically can the entire
+            pipeline produce the answer?
+          </p>
+        </div>
+
+      </div>
+
+      <div class="learning-note">
+        <strong>The complete mental model</strong>
+        <p>
+          Ingestion happens before the user asks anything:
+          Data → Chunk → Embed → Index.
+          At query time:
+          Query → Retrieve → Rerank → Augment → Generate → Answer.
+        </p>
+      </div>
+
+      <div class="quiz" id="quizArea">
+        <div class="quiz-question">
+          Which statement best describes RAG?
+        </div>
+
+        <button class="quiz-option"
+          onclick="answerQuiz(this,false)">
+          A. It permanently trains the LLM on company documents.
+        </button>
+
+        <button class="quiz-option"
+          onclick="answerQuiz(this,true)">
+          B. It retrieves relevant external information and provides it
+          to the LLM as context at inference time.
+        </button>
+
+        <button class="quiz-option"
+          onclick="answerQuiz(this,false)">
+          C. It replaces the LLM with a vector database.
+        </button>
+
+        <button class="quiz-option"
+          onclick="answerQuiz(this,false)">
+          D. It only performs keyword search.
+        </button>
+
+        <div id="quizResult"
+             style="margin-top:12px;font-size:12px;font-weight:700;"></div>
+      </div>
+    `
+  }
+];
+
+
+let currentStep = 0;
+
+
+/* ---------- RENDER ---------- */
+
+function renderStep(index) {
+
+  currentStep = Math.max(0, Math.min(index, steps.length - 1));
+
+  const stage = document.getElementById("stage");
+
+  stage.innerHTML = `
+    <div class="card fade">
+
+      <div class="card-header">
+
+        <div>
+          <div class="card-title">
+            ${steps[currentStep].title}
+          </div>
+
+          <div class="card-subtitle">
+            ${steps[currentStep].subtitle}
+          </div>
+        </div>
+
+        <div class="badge">
+          ${currentStep + 1} / ${steps.length}
+        </div>
+
+      </div>
+
+      <div class="card-body">
+        ${steps[currentStep].html}
+      </div>
+
+    </div>
+  `;
+
+  updateNavigation();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+/* ---------- NAVIGATION ---------- */
+
+function updateNavigation() {
+
+  document.querySelectorAll(".step-btn[data-step]")
+    .forEach(btn => {
+
+      const step = Number(btn.dataset.step);
+
+      btn.classList.toggle(
+        "active",
+        step === currentStep
+      );
+
+      btn.classList.toggle(
+        "completed",
+        step < currentStep
+      );
+    });
+
+
+  document.querySelectorAll(".pipeline-node")
+    .forEach(node => {
+
+      const step = Number(node.dataset.step);
+
+      node.classList.toggle(
+        "active",
+        step === currentStep
+      );
+    });
+
+
+  document.getElementById("stepCounter").textContent =
+    `Step ${currentStep + 1} of ${steps.length}`;
+
+  document.getElementById("prevBtn").disabled =
+    currentStep === 0;
+
+  document.getElementById("nextBtn").textContent =
+    currentStep === steps.length - 1
+      ? "Restart ↻"
+      : "Next Step →";
+}
+
+
+/* ---------- SIDEBAR ---------- */
+
+document.querySelectorAll(".step-btn[data-step]")
+  .forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      renderStep(
+        Number(btn.dataset.step)
+      );
+
+    });
+
+  });
+
+
+/* ---------- PIPELINE ---------- */
+
+document.querySelectorAll(".pipeline-node")
+  .forEach(node => {
+
+    node.addEventListener("click", () => {
+
+      renderStep(
+        Number(node.dataset.step)
+      );
+
+    });
+
+  });
+
+
+/* ---------- PREVIOUS / NEXT ---------- */
+
+document.getElementById("prevBtn")
+  .addEventListener("click", () => {
+
+    if(currentStep > 0) {
+      renderStep(currentStep - 1);
+    }
+
+  });
+
+
+document.getElementById("nextBtn")
+  .addEventListener("click", () => {
+
+    if(currentStep < steps.length - 1) {
+      renderStep(currentStep + 1);
+    } else {
+      renderStep(0);
+    }
+
+  });
+
+
+/* ---------- KEYBOARD ---------- */
+
+document.addEventListener("keydown", e => {
+
+  if(e.key === "ArrowRight") {
+
+    if(currentStep < steps.length - 1)
+      renderStep(currentStep + 1);
+
+  }
+
+  if(e.key === "ArrowLeft") {
+
+    if(currentStep > 0)
+      renderStep(currentStep - 1);
+
+  }
+
+});
+
+
+/* ---------- QUIZ ---------- */
+
+function answerQuiz(button, correct) {
+
+  document.querySelectorAll(".quiz-option")
+    .forEach(option => {
+      option.disabled = true;
+    });
+
+  if(correct) {
+
+    button.classList.add("correct");
+
+    document.getElementById("quizResult").innerHTML =
+      "✓ Correct! RAG retrieves external knowledge at inference time and provides it to the LLM as context.";
+
+    document.getElementById("quizResult").style.color =
+      "#15803d";
+
+  } else {
+
+    button.classList.add("wrong");
+
+    document.getElementById("quizResult").innerHTML =
+      "Not quite. Remember: RAG retrieves information at runtime; it does not automatically retrain the LLM.";
+
+    document.getElementById("quizResult").style.color =
+      "#dc2626";
+
+  }
+
+}
+
+
+function showQuiz() {
+
+  renderStep(9);
+
+  setTimeout(() => {
+
+    const quiz = document.getElementById("quizArea");
+
+    if(quiz) {
+
+      quiz.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }
+
+  }, 300);
+
+}
+
+
+/* ---------- START ---------- */
+
+renderStep(0);
+
+</script>
+
+</body>
+</html>
